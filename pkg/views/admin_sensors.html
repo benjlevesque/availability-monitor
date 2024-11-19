@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sensors</title>
+</head>
+<body>
+    <h1>Sensors</h1>
+    <ul>
+    {{ range . }}
+    <li>{{.MAC}} - {{ .Location }}</li>
+    {{ end }}
+    </ul>
+</body>
+</html>

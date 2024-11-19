@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pending Sensors</title>
+</head>
+<body>
+    <h1>Pending Sensors</h1>
+    {{ range . }}
+    <form action="/admin/sensors/{{ .MAC }}" method="post" style="margin-top: 5px;">
+        <label for="location_{{.MAC}}">{{.MAC}}</label>
+        <input placeholder="location" type="text" name="location" id="location_{{.MAC}}" required>
+        <button type="submit">Rename</button>
+    </form>
+    {{ end }}
+</body>
+</html>
