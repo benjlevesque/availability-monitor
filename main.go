@@ -6,12 +6,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
 	"time"
 
+	"github.com/caarlos0/env/v11"
 	"github.com/jmoiron/sqlx"
-	"github.com/kelseyhightower/envconfig"
 	"github.com/labstack/echo/v4"
 	_ "github.com/lib/pq"
 
@@ -23,16 +24,13 @@ import (
 )
 
 type Configuration struct {
-	DbUrl             string `required:"true" split_words:"true"`
-	AdminUsername     string `required:"true" split_words:"true"`
-	AdminPasswordHash string `required:"true" split_words:"true"`
-	Port              int    `default:"7000" split_words:"true"`
-	// duration, in seconds, after which the sensor is unreachable
-	UnreachableTimeout int `default:"900" split_words:"true"`
-	// duration, in seconds, after which the sensor is maybe free
-	MaybeFreeTimeout int `default:"180" split_words:"true"`
-	// duration, in seconds, after which the sensor is free
-	FreeTimeout int `default:"300" split_words:"true"`
+	DbUrl              url.URL       `env:"DB_URL,required"`
+	AdminUsername      string        `env:"ADMIN_USERNAME,required"`
+	AdminPasswordHash  string        `env:"ADMIN_PASSWORD_HASH,required"`
+	Port               int           `env:"PORT" envDefault:"7000"`
+	MaybeFreeTimeout   time.Duration `envDefault:"3m"`
+	FreeTimeout        time.Duration `envDefault:"5m"`
+	UnreachableTimeout time.Duration `envDefault:"15m"`
 }
 
 var webApi = flag.Bool("web", false, "enables web API")
@@ -45,7 +43,7 @@ func main() {
 	logger := log.Default()
 
 	config := Configuration{}
-	err := envconfig.Process("", &config)
+	err := env.Parse(&config)
 	if err != nil {
 		logger.Fatal(err)
 	}
@@ -57,7 +55,7 @@ func main() {
 		*ui = true
 	}
 
-	connection, err := sqlx.Connect("postgres", config.DbUrl)
+	connection, err := sqlx.Connect("postgres", config.DbUrl.String())
 	if err != nil {
 		logger.Fatal(err)
 	}
@@ -87,9 +85,9 @@ func main() {
 		monitorService := monitor.NewMonitorService(
 			sensorManager,
 			logger,
-			time.Duration(config.UnreachableTimeout)*time.Second,
-			time.Duration(config.MaybeFreeTimeout)*time.Second,
-			time.Duration(config.FreeTimeout)*time.Second,
+			config.UnreachableTimeout,
+			config.MaybeFreeTimeout,
+			config.FreeTimeout,
 		)
 		monitorService.MapHandlers(httpServer.Echo)
 		monitorService.Run(ctx)
