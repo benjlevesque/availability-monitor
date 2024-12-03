@@ -9,8 +9,8 @@
     {{ range . }}
     <li>
         <form action="/admin/sensors/{{ .MAC }}" method="post" style="margin-top: 5px;">
-            <label for="location_{{.MAC}}">{{.MAC}} ({{ .Location }})</label>
-            <input placeholder="location" type="text" name="location" id="location_{{.MAC}}" required>
+            <label for="location_{{.MAC}}">{{.MAC}}</label>
+            <input placeholder="location" type="text" name="location" id="location_{{.MAC}}" required value="{{.Location}}">
             <button type="submit">Rename</button>
         </form>
     </li>
