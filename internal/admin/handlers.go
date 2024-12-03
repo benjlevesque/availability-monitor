@@ -57,7 +57,7 @@ func (s *AdminApi) MapHandlers(e *echo.Echo, prefix string) error {
 		mac := c.Param("mac")
 		location := c.Request().FormValue("location")
 		s.sensorManager.SetLocation(mac, location)
-		return c.Redirect(http.StatusFound, fmt.Sprintf("/%s/sensors/pending", prefix))
+		return c.Redirect(http.StatusFound, fmt.Sprintf("/%s/sensors", prefix))
 	})
 
 	admin.DELETE("/sensors/:mac/", func(c echo.Context) error {

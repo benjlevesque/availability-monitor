@@ -7,7 +7,14 @@
     <h1>Sensors</h1>
     <ul>
     {{ range . }}
-    <li>{{.MAC}} - {{ .Location }}</li>
+    <li>
+        <form action="/admin/sensors/{{ .MAC }}" method="post" style="margin-top: 5px;">
+            <label for="location_{{.MAC}}">{{.MAC}} ({{ .Location }})</label>
+            <input placeholder="location" type="text" name="location" id="location_{{.MAC}}" required>
+            <button type="submit">Rename</button>
+        </form>
+    </li>
+    
     {{ end }}
     </ul>
 </body>
