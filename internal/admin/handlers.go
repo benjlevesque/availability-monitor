@@ -6,15 +6,15 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
 
 // Map Server Handlers
 func (s *AdminApi) MapHandlers(e *echo.Echo, prefix string) error {
 	admin := e.Group(prefix)
-	admin.Use(middleware.BasicAuth(func(username, password string, ctx echo.Context) (bool, error) {
-		return s.credentials.Validate(username, password)
-	}))
+	// TODO enable auth
+	// admin.Use(middleware.BasicAuth(func(username, password string, ctx echo.Context) (bool, error) {
+	// 	return s.credentials.Validate(username, password)
+	// }))
 
 	admin.GET("/sensors/", func(c echo.Context) error {
 		type sensorItem struct {
