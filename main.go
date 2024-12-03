@@ -28,9 +28,9 @@ type Configuration struct {
 	AdminUsername      string        `env:"ADMIN_USERNAME,required"`
 	AdminPasswordHash  string        `env:"ADMIN_PASSWORD_HASH,required"`
 	Port               int           `env:"PORT" envDefault:"7000"`
-	MaybeFreeTimeout   time.Duration `envDefault:"3m"`
-	FreeTimeout        time.Duration `envDefault:"5m"`
-	UnreachableTimeout time.Duration `envDefault:"15m"`
+	MaybeFreeTimeout   time.Duration `env:"MAYBE_FREE_TIMEOUT" envDefault:"3m"`
+	FreeTimeout        time.Duration `env:"FREE_TIMEOUT" envDefault:"5m"`
+	UnreachableTimeout time.Duration `env:"UNREACHABLE_TIMEOUT" envDefault:"15m"`
 }
 
 var webApi = flag.Bool("web", false, "enables web API")
