@@ -75,7 +75,7 @@ func main() {
 		logger.Print("Web API enabled")
 	}
 	if *adminApi {
-		credentials := admin.NewBasicCredentials(config.AdminUsername, config.AdminPasswordHash)
+		credentials := admin.NewBasicCredentials(config.AdminUsername, config.AdminPasswordHash, logger)
 		admApi := admin.NewAdminApi(sensorManager, credentials, logger)
 
 		admApi.MapHandlers(httpServer.Echo, "admin")
