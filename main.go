@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"embed"
 	"flag"
 	"fmt"
 	"log"
@@ -13,7 +14,8 @@ import (
 
 	"github.com/caarlos0/env/v11"
 	"github.com/jmoiron/sqlx"
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+
 	_ "github.com/lib/pq"
 
 	"github.com/EtincelleCoworking/availability-monitor/internal/admin"
@@ -37,6 +39,9 @@ var webApi = flag.Bool("web", false, "enables web API")
 var adminApi = flag.Bool("admin", false, "enables admin API")
 var monitorSvc = flag.Bool("monitor", false, "enables monitor service")
 var ui = flag.Bool("dashboard", false, "enables UI")
+
+//go:embed static/*
+var staticFiles embed.FS
 
 func main() {
 	flag.Parse()
@@ -94,10 +99,13 @@ func main() {
 		logger.Print("Monitor Service enabled")
 	}
 	if *ui {
-		httpServer.Static("/", "./pkg/views/static")
-		httpServer.GET("/", func(c echo.Context) error {
-			return c.Render(http.StatusOK, "home.html", nil)
+		static := middleware.StaticWithConfig(middleware.StaticConfig{
+			Root:       "static",
+			Index:      "home.html",
+			Filesystem: http.FS(staticFiles),
 		})
+		httpServer.Use(static)
+
 		logger.Print("UI enabled")
 	}
 

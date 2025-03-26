@@ -1,11 +1,8 @@
 package server
 
 import (
+	"fmt"
 	"io"
-	"log"
-	"os"
-	"path/filepath"
-	"strings"
 	"text/template"
 
 	"github.com/labstack/echo/v4"
@@ -24,21 +21,9 @@ func (t *TemplateRenderer) Render(w io.Writer, name string, data interface{}, c 
 		viewContext["reverse"] = c.Echo().Reverse
 	}
 
-	return t.templates.ExecuteTemplate(w, name, data)
-}
-
-func (t *TemplateRenderer) ParseTemplates() error {
-	t.templates = template.New("")
-	err := filepath.Walk("./pkg/views", func(path string, info os.FileInfo, err error) error {
-		if strings.Contains(path, ".html") {
-			_, err = t.templates.ParseFiles(path)
-			if err != nil {
-				log.Println(err)
-			}
-		}
-
-		return err
-	})
-
+	err := t.templates.ExecuteTemplate(w, name, data)
+	if err != nil {
+		fmt.Print(err)
+	}
 	return err
 }
